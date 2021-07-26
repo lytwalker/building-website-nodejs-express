@@ -5,8 +5,15 @@ const feedbackRoute = require('./feedback');
 
 const router = express.Router();
 
-module.exports = (params) => {
+module.exports = params => {
   router.get('/', (request, response) => {
+    // // Testing cookie sessions
+    // if (!request.session.visitcount) {
+    //   request.session.visitcount = 0;
+    // }
+    // request.session.visitcount++;
+    // console.log(`Number of visits is: ${request.session.visitcount}`);
+
     response.render('pages/index', { pageTitle: 'Welcome' });
   });
   router.use('/speakers', speakersRoute(params));
