@@ -7,8 +7,9 @@ module.exports = (params) => {
 
   router.get('/', async (request, response) => {
     const feedback = await feedbackService.getList();
-    response.render('pages/feedback', {
+    response.render('layout', {
       pageTitle: 'Feedback',
+      template: 'feedback',
       feedback: JSON.stringify(feedback),
     });
   });
