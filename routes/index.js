@@ -6,15 +6,21 @@ const feedbackRoute = require('./feedback');
 const router = express.Router();
 
 module.exports = (params) => {
-  router.get('/', (request, response) => {
+  const { speakersService } = params;
+
+  router.get('/', async (request, response) => {
     // // Testing cookie sessions
     // if (!request.session.visitcount) {
     //   request.session.visitcount = 0;
     // }
     // request.session.visitcount++;
     // console.log(`Number of visits is: ${request.session.visitcount}`);
-
-    response.render('layout', { pageTitle: 'Welcome', template: 'index' });
+    const speakers = await speakersService.getList();
+    response.render('layout', {
+      pageTitle: 'Welcome',
+      template: 'index',
+      speakers,
+    });
   });
   router.use('/speakers', speakersRoute(params));
   router.use('/feedback', feedbackRoute(params));

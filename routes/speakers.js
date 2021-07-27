@@ -15,8 +15,9 @@ module.exports = (params) => {
     // return response.json(speakers);
   });
   router.get('/:shortname', (request, response) => {
-    response.render('pages/Speakers', {
+    response.render('layout', {
       pageTitle: `Speakers Details page of ${request.params.shortname}`,
+      template: 'speakers',
     });
     // response.send(`Speakers Details page of ${request.params.shortname}`);
   });
