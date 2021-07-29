@@ -16,10 +16,12 @@ module.exports = (params) => {
     // request.session.visitcount++;
     // console.log(`Number of visits is: ${request.session.visitcount}`);
     const speakers = await speakersService.getList();
+    const allArtwork = await speakersService.getAllArtwork();
     response.render('layout', {
       pageTitle: 'Welcome',
       template: 'index',
       speakers,
+      allArtwork,
     });
   });
   router.use('/speakers', speakersRoute(params));
