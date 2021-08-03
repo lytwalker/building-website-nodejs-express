@@ -5,7 +5,7 @@ const feedbackRoute = require('./feedback');
 
 const router = express.Router();
 
-module.exports = (params) => {
+module.exports = params => {
   const { speakersService } = params;
 
   router.get('/', async (request, response, next) => {
