@@ -1,7 +1,31 @@
+const { response } = require('express');
 const express = require('express');
 const { check, validationResult } = require('express-validator');
 
 const router = express.Router();
+
+const validations = [
+  check('name')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Please enter valid name.'),
+  check('email')
+    .trim()
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please enter valid email address.'),
+  check('title')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Please enter valid title.'),
+  check('message')
+    .trim()
+    .isLength({ min: 5 })
+    .escape()
+    .withMessage('Please enter valid message.'),
+];
 
 module.exports = params => {
   const { feedbackService } = params;
@@ -24,31 +48,8 @@ module.exports = params => {
       return next(error);
     }
   });
-  router.post(
-    '/',
-    [
-      check('name')
-        .trim()
-        .isLength({ min: 3 })
-        .escape()
-        .withMessage('Please enter valid name.'),
-      check('email')
-        .trim()
-        .isEmail()
-        .normalizeEmail()
-        .withMessage('Please enter valid email address.'),
-      check('title')
-        .trim()
-        .isLength({ min: 3 })
-        .escape()
-        .withMessage('Please enter valid title.'),
-      check('message')
-        .trim()
-        .isLength({ min: 5 })
-        .escape()
-        .withMessage('Please enter valid message.'),
-    ],
-    async (request, response) => {
+  router.post('/', validations, async (request, response) => {
+    try {
       const errors = validationResult(request);
 
       if (!errors.isEmpty()) {
@@ -58,16 +59,32 @@ module.exports = params => {
         return response.redirect('/feedback');
       }
 
-      try {
-        const { name, email, title, message } = request.body;
-        await feedbackService.addEntry(name, email, title, message);
-        request.session.feedback = { message: 'Thank you for your feedback.' };
-      } catch (error) {
-        return next(error);
-      }
-      return response.redirect('/feedback');
+      const { name, email, title, message } = request.body;
+      await feedbackService.addEntry(name, email, title, message);
+      request.session.feedback = { message: 'Thank you for your feedback.' };
+    } catch (error) {
+      return next(error);
     }
-  );
+    return response.redirect('/feedback');
+  });
+
+  // REST API Routes
+  router.post('/api', validations, async (request, response, next) => {
+    try {
+      const errors = validationResult(request);
+
+      if (!errors.isEmpty()) {
+        return response.json({ errors: errors.array() });
+      }
+
+      const { name, email, title, message } = request.body;
+      await feedbackService.addEntry(name, email, title, message);
+      const feedback = await feedbackService.getList();
+      return response.json({ feedback });
+    } catch (error) {
+      return next(error);
+    }
+  });
 
   return router;
 };
