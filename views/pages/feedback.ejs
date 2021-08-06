@@ -3,19 +3,23 @@
     <div class="col-md-4">
       <div class="maincontent">
         <h1>Send us feedback</h1>
-        <% if (errors) { %>
-        <div class="alert alert-danger" role="alert">
-          <ul>
-            <% errors.forEach((error) => { %>
-            <li><%= error.msg %></li>
-            <% }); %>
-          </ul>
+
+        <div class="feedback-status">
+          <% if (locals.errors) { %>
+          <div class="alert alert-danger" role="alert">
+            <ul>
+              <% errors.forEach((error) => { %>
+              <li><%= error.msg %></li>
+              <% }); %>
+            </ul>
+          </div>
+          <% } else if (locals.successMessage) { %>
+          <div class="alert alert-success" role="alert">
+            <%= successMessage %>
+          </div>
+          <% } %>
         </div>
-        <% } else if (successMessage) { %>
-        <div class="alert alert-success" role="alert">
-          <%= successMessage %>
-        </div>
-        <% } %>
+
         <form class="feedback-form" method="post" action="/feedback">
           <div class="form-group">
             <label for="feedback-form-name">Name</label>
